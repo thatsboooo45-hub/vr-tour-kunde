@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>VR Tour</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
+  <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+  <style>
+    body { margin: 0; }
+    #panorama { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+<div id="panorama"></div>
+<script>
+pannellum.viewer('panorama', {
+  default: {
+    firstScene: 'room1',
+    sceneFadeDuration: 1000,
+    autoLoad: true
+  },
+  scenes: {
+    room1: {
+      title: 'Büro 1',
+      panorama: 'room1.jpg',
+      hotSpots: [
+        {
+          pitch: 0, yaw: 90,
+          type: 'scene',
+          text: '→ Büro 2',
+          sceneId: 'room2'
+        }
+      ]
+    },
+    room2: {
+      title: 'Büro 2',
+      panorama: 'room2.jpg',
+      hotSpots: [
+        {
+          pitch: 0, yaw: -90,
+          type: 'scene',
+          text: '← Büro 1',
+          sceneId: 'room1'
+        }
+      ]
+    }
+  }
+});
+</script>
+</body>
+</html>
