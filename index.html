@@ -1,51 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VR Tour</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
   <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; }
-    #panorama { width: 100vw; height: 100vh; }
+    :root {
+      --accent: #a8e31a;
+      --accent-dark: #7aaa0f;
+      --bg: #0d0d0d;
+      --surface: #1a1a1a;
+      --surface2: #222;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --strip-height: 110px;
+      --topbar-height: 52px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #topbar {
+      height: var(--topbar-height);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid #2a2a2a;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    #tour-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--accent);
+    }
+    #room-label {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    #scene-counter {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+    #scene-counter span { color: var(--accent); }
+    #panorama-wrap {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    #panorama { width: 100%; height: 100%; }
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.55);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      z-index: 5;
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+    .nav-arrow:hover { background: var(--accent); color: #000; transform: translateY(-50%) scale(1.1); }
+    #nav-prev { left: 16px; }
+    #nav-next { right: 16px; }
+    .nav-arrow.hidden { opacity: 0; pointer-events: none; }
+    #btn-fullscreen {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(0,0,0,0.55);
+      border: 1.5px solid #444;
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 5;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    #btn-fullscreen:hover { border-color: var(--accent); color: var(--accent); }
+    #strip {
+      height: var(--strip-height);
+      background: var(--surface);
+      border-top: 1px solid #2a2a2a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      overflow-x: auto;
+      flex-shrink: 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--surface2);
+    }
+    #strip::-webkit-scrollbar { height: 4px; }
+    #strip::-webkit-scrollbar-track { background: var(--surface2); }
+    #strip::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    .thumb {
+      flex-shrink: 0;
+      width: 130px;
+      height: 82px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .thumb:hover { transform: translateY(-2px); border-color: #555; }
+    .thumb.active { border-color: var(--accent); }
+    .thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.75);
+      transition: filter 0.2s;
+    }
+    .thumb:hover img, .thumb.active img { filter: brightness(1); }
+    .thumb-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 14px 8px 6px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .thumb.active .thumb-label { color: var(--accent); }
+    .thumb-num {
+      position: absolute;
+      top: 6px; left: 8px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
-<div id="panorama"></div>
+
+<div id="topbar">
+  <div id="tour-title">360° Tour</div>
+  <div id="room-label">Wird geladen…</div>
+  <div id="scene-counter"><span id="c-current">1</span> / <span id="c-total">2</span></div>
+</div>
+
+<div id="panorama-wrap">
+  <div id="panorama"></div>
+  <div class="nav-arrow hidden" id="nav-prev" onclick="navigate(-1)">&#8249;</div>
+  <div class="nav-arrow" id="nav-next" onclick="navigate(1)">&#8250;</div>
+  <div id="btn-fullscreen" onclick="toggleFullscreen()" title="Vollbild">⛶</div>
+</div>
+
+<div id="strip"></div>
+
 <script>
-pannellum.viewer('panorama', {
-  default: {
-    firstScene: 'room1',
-    sceneFadeDuration: 1000,
-    autoLoad: true
+const scenes = [
+  {
+    id: 'room1',
+    title: 'Büro 1',
+    panorama: 'room%201.jpg',
+    hotSpots: [
+      { pitch: 0, yaw: 90, type: 'scene', text: 'Büro 2 →', sceneId: 'room2' }
+    ]
   },
-  scenes: {
-    room1: {
-      title: 'Büro 1',
-      panorama: 'room%201.jpg',
-      hotSpots: [
-        {
-          pitch: 0, yaw: 90,
-          type: 'scene',
-          text: '→ Büro 2',
-          sceneId: 'room2'
-        }
-      ]
-    },
-    room2: {
-      title: 'Büro 2',
-      panorama: 'room%202.jpg',
-      hotSpots: [
-        {
-          pitch: 0, yaw: -90,
-          type: 'scene',
-          text: '← Büro 1',
-          sceneId: 'room1'
-        }
-      ]
-    }
+  {
+    id: 'room2',
+    title: 'Büro 2',
+    panorama: 'room%202.jpg',
+    hotSpots: [
+      { pitch: 0, yaw: -90, type: 'scene', text: '← Büro 1', sceneId: 'room1' }
+    ]
+  }
+];
+
+let currentIndex = 0;
+let viewer = null;
+
+const pannellumScenes = {};
+scenes.forEach(s => {
+  pannellumScenes[s.id] = {
+    title: s.title,
+    panorama: s.panorama,
+    hotSpots: s.hotSpots
+  };
+});
+
+viewer = pannellum.viewer('panorama', {
+  default: {
+    firstScene: scenes[0].id,
+    sceneFadeDuration: 800,
+    autoLoad: true,
+    showControls: false
+  },
+  scenes: pannellumScenes
+});
+
+const strip = document.getElementById('strip');
+document.getElementById('c-total').textContent = scenes.length;
+
+scenes.forEach((s, i) => {
+  const thumb = document.createElement('div');
+  thumb.className = 'thumb' + (i === 0 ? ' active' : '');
+  thumb.dataset.index = i;
+  thumb.innerHTML = `
+    <img src="${s.panorama}" alt="${s.title}" onerror="this.style.background='#333'">
+    <div class="thumb-num">0${i+1}</div>
+    <div class="thumb-label">${s.title}</div>
+  `;
+  thumb.addEventListener('click', () => goTo(i));
+  strip.appendChild(thumb);
+});
+
+function goTo(index) {
+  currentIndex = index;
+  viewer.loadScene(scenes[index].id);
+  updateUI();
+}
+
+function navigate(dir) {
+  const next = currentIndex + dir;
+  if (next >= 0 && next < scenes.length) goTo(next);
+}
+
+function updateUI() {
+  document.getElementById('room-label').textContent = scenes[currentIndex].title;
+  document.getElementById('c-current').textContent = currentIndex + 1;
+  document.querySelectorAll('.thumb').forEach((t, i) => {
+    t.classList.toggle('active', i === currentIndex);
+  });
+  document.getElementById('nav-prev').classList.toggle('hidden', currentIndex === 0);
+  document.getElementById('nav-next').classList.toggle('hidden', currentIndex === scenes.length - 1);
+}
+
+viewer.on('scenechange', (sceneId) => {
+  const index = scenes.findIndex(s => s.id === sceneId);
+  if (index !== -1 && index !== currentIndex) {
+    currentIndex = index;
+    updateUI();
   }
 });
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+updateUI();
 </script>
 </body>
 </html>
