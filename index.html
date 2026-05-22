@@ -19,7 +19,9 @@
       --strip-height: 110px;
       --topbar-height: 52px;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: 'DM Sans', sans-serif;
       background: var(--bg);
@@ -29,23 +31,28 @@
       display: flex;
       flex-direction: column;
     }
+
+    /* TOP BAR */
     #topbar {
       height: var(--topbar-height);
-      background: var(--bg);
+      background: rgba(13, 13, 13, 0.45);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 20px;
-      border-bottom: 1px solid #2a2a2a;
+      border-bottom: 1px solid rgba(42, 42, 42, 0.45);
       flex-shrink: 0;
       z-index: 10;
+      backdrop-filter: blur(8px);
     }
+
     #tour-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 22px;
       letter-spacing: 3px;
       color: var(--accent);
     }
+
     #room-label {
       font-size: 13px;
       font-weight: 300;
@@ -53,24 +60,35 @@
       letter-spacing: 1px;
       text-transform: uppercase;
     }
+
     #scene-counter {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 18px;
       color: var(--text-muted);
       letter-spacing: 2px;
     }
-    #scene-counter span { color: var(--accent); }
+    #scene-counter span {
+      color: var(--accent);
+    }
+
+    /* PANORAMA */
     #panorama-wrap {
       flex: 1;
       position: relative;
       overflow: hidden;
     }
-    #panorama { width: 100%; height: 100%; }
+
+    #panorama {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Nav arrows overlay */
     .nav-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.55);
+      background: rgba(0,0,0,0.45);
       border: 1.5px solid var(--accent);
       color: var(--accent);
       width: 44px;
@@ -85,16 +103,22 @@
       transition: background 0.2s, transform 0.2s;
       user-select: none;
     }
-    .nav-arrow:hover { background: var(--accent); color: #000; transform: translateY(-50%) scale(1.1); }
+    .nav-arrow:hover {
+      background: var(--accent);
+      color: #000;
+      transform: translateY(-50%) scale(1.1);
+    }
     #nav-prev { left: 16px; }
     #nav-next { right: 16px; }
     .nav-arrow.hidden { opacity: 0; pointer-events: none; }
+
+    /* Fullscreen button */
     #btn-fullscreen {
       position: absolute;
       top: 14px;
       right: 14px;
-      background: rgba(0,0,0,0.55);
-      border: 1.5px solid #444;
+      background: rgba(0,0,0,0.45);
+      border: 1.5px solid rgba(68,68,68,0.45);
       color: var(--text-muted);
       width: 36px;
       height: 36px;
@@ -108,22 +132,27 @@
       transition: border-color 0.2s, color 0.2s;
     }
     #btn-fullscreen:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* THUMBNAIL STRIP */
     #strip {
       height: var(--strip-height);
-      background: var(--surface);
-      border-top: 1px solid #2a2a2a;
+      background: rgba(26, 26, 26, 0.45);
+      border-top: 1px solid rgba(42, 42, 42, 0.45);
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 0 16px;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 16px;
       overflow-x: auto;
       flex-shrink: 0;
       scrollbar-width: thin;
-      scrollbar-color: var(--accent) var(--surface2);
+      scrollbar-color: var(--accent) rgba(34, 34, 34, 0.45);
+      backdrop-filter: blur(8px);
     }
     #strip::-webkit-scrollbar { height: 4px; }
-    #strip::-webkit-scrollbar-track { background: var(--surface2); }
+    #strip::-webkit-scrollbar-track { background: rgba(34, 34, 34, 0.45); }
     #strip::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
     .thumb {
       flex-shrink: 0;
       width: 130px;
@@ -137,26 +166,17 @@
     }
     .thumb:hover { transform: translateY(-2px); border-color: #555; }
     .thumb.active { border-color: var(--accent); }
+
     .thumb img {
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
       display: block;
       filter: brightness(0.75);
       transition: filter 0.2s;
     }
     .thumb:hover img, .thumb.active img { filter: brightness(1); }
-    .thumb-label {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
-      padding: 14px 8px 6px;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: #fff;
-    }
-    .thumb.active .thumb-label { color: var(--accent); }
+
     .thumb-num {
       position: absolute;
       top: 6px; left: 8px;
@@ -164,27 +184,35 @@
       font-size: 13px;
       color: var(--accent);
       letter-spacing: 1px;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
 
+<!-- TOP BAR -->
 <div id="topbar">
-  <div id="tour-title">360° Tour</div>
-  <div id="room-label">Wird geladen…</div>
+  <div id="tour-title">360° TOUR</div>
   <div id="scene-counter"><span id="c-current">1</span> / <span id="c-total">2</span></div>
 </div>
 
+<!-- PANORAMA -->
 <div id="panorama-wrap">
   <div id="panorama"></div>
+
   <div class="nav-arrow hidden" id="nav-prev" onclick="navigate(-1)">&#8249;</div>
   <div class="nav-arrow" id="nav-next" onclick="navigate(1)">&#8250;</div>
+
   <div id="btn-fullscreen" onclick="toggleFullscreen()" title="Vollbild">⛶</div>
 </div>
 
+<!-- THUMBNAIL STRIP -->
 <div id="strip"></div>
 
 <script>
+// ============================================================
+// KONFIGURATION – hier kannst du Räume hinzufügen / anpassen
+// ============================================================
 const scenes = [
   {
     id: 'room1',
@@ -202,11 +230,14 @@ const scenes = [
       { pitch: 0, yaw: -90, type: 'scene', text: '← Büro 1', sceneId: 'room1' }
     ]
   }
+  // Weitere Räume einfach hier einfügen nach demselben Muster
 ];
+// ============================================================
 
 let currentIndex = 0;
 let viewer = null;
 
+// Build Pannellum scene config
 const pannellumScenes = {};
 scenes.forEach(s => {
   pannellumScenes[s.id] = {
@@ -216,6 +247,7 @@ scenes.forEach(s => {
   };
 });
 
+// Init viewer
 viewer = pannellum.viewer('panorama', {
   default: {
     firstScene: scenes[0].id,
@@ -226,6 +258,7 @@ viewer = pannellum.viewer('panorama', {
   scenes: pannellumScenes
 });
 
+// Build thumbnail strip
 const strip = document.getElementById('strip');
 document.getElementById('c-total').textContent = scenes.length;
 
@@ -236,7 +269,6 @@ scenes.forEach((s, i) => {
   thumb.innerHTML = `
     <img src="${s.panorama}" alt="${s.title}" onerror="this.style.background='#333'">
     <div class="thumb-num">0${i+1}</div>
-    <div class="thumb-label">${s.title}</div>
   `;
   thumb.addEventListener('click', () => goTo(i));
   strip.appendChild(thumb);
@@ -244,7 +276,8 @@ scenes.forEach((s, i) => {
 
 function goTo(index) {
   currentIndex = index;
-  viewer.loadScene(scenes[index].id);
+  const scene = scenes[index];
+  viewer.loadScene(scene.id);
   updateUI();
 }
 
@@ -254,15 +287,20 @@ function navigate(dir) {
 }
 
 function updateUI() {
-  document.getElementById('room-label').textContent = scenes[currentIndex].title;
+  // Zähler
   document.getElementById('c-current').textContent = currentIndex + 1;
+
+  // Thumbnails
   document.querySelectorAll('.thumb').forEach((t, i) => {
     t.classList.toggle('active', i === currentIndex);
   });
+
+  // Arrows
   document.getElementById('nav-prev').classList.toggle('hidden', currentIndex === 0);
   document.getElementById('nav-next').classList.toggle('hidden', currentIndex === scenes.length - 1);
 }
 
+// Sync when hotspot is clicked inside panorama
 viewer.on('scenechange', (sceneId) => {
   const index = scenes.findIndex(s => s.id === sceneId);
   if (index !== -1 && index !== currentIndex) {
@@ -271,6 +309,7 @@ viewer.on('scenechange', (sceneId) => {
   }
 });
 
+// Fullscreen
 function toggleFullscreen() {
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen();
@@ -279,6 +318,7 @@ function toggleFullscreen() {
   }
 }
 
+// Init UI
 updateUI();
 </script>
 </body>
