@@ -11,11 +11,11 @@
     :root {
       --accent: #a8e31a;
       --accent-dark: #7aaa0f;
-      --bg: #0d0d0d;
-      --surface: #1a1a1a;
-      --surface2: #222;
-      --text: #f0f0f0;
-      --text-muted: #888;
+      --bg: #f5f5f5;
+      --surface: #ececec;
+      --surface2: #e0e0e0;
+      --text: #1a1a1a;
+      --text-muted: #666;
       --strip-height: 110px;
       --topbar-height: 52px;
     }
@@ -35,22 +35,34 @@
     /* TOP BAR */
     #topbar {
       height: var(--topbar-height);
-      background: rgba(13, 13, 13, 0.45);
+      background: rgba(245, 245, 245, 0.92);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 20px;
-      border-bottom: 1px solid rgba(42, 42, 42, 0.45);
+      border-bottom: 1px solid rgba(200, 200, 200, 0.3);
       flex-shrink: 0;
       z-index: 10;
       backdrop-filter: blur(8px);
     }
 
+    #topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    #logo {
+      height: 32px;
+      width: auto;
+    }
+
     #tour-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 3px;
-      color: var(--accent);
+      font-size: 18px;
+      letter-spacing: 2px;
+      color: #00a651;
+      font-weight: 600;
     }
 
     #room-label {
@@ -68,7 +80,7 @@
       letter-spacing: 2px;
     }
     #scene-counter span {
-      color: var(--accent);
+      color: #00a651;
     }
 
     /* PANORAMA */
@@ -88,9 +100,9 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(0,0,0,0.45);
-      border: 1.5px solid var(--accent);
-      color: var(--accent);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid #00a651;
+      color: #00a651;
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -102,10 +114,11 @@
       z-index: 5;
       transition: background 0.2s, transform 0.2s;
       user-select: none;
+      backdrop-filter: blur(4px);
     }
     .nav-arrow:hover {
-      background: var(--accent);
-      color: #000;
+      background: #00a651;
+      color: #fff;
       transform: translateY(-50%) scale(1.1);
     }
     #nav-prev { left: 16px; }
@@ -117,9 +130,9 @@
       position: absolute;
       top: 14px;
       right: 14px;
-      background: rgba(0,0,0,0.45);
-      border: 1.5px solid rgba(68,68,68,0.45);
-      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1.5px solid rgba(100, 100, 100, 0.3);
+      color: #666;
       width: 36px;
       height: 36px;
       border-radius: 8px;
@@ -130,14 +143,15 @@
       font-size: 16px;
       z-index: 5;
       transition: border-color 0.2s, color 0.2s;
+      backdrop-filter: blur(4px);
     }
-    #btn-fullscreen:hover { border-color: var(--accent); color: var(--accent); }
+    #btn-fullscreen:hover { border-color: #00a651; color: #00a651; }
 
     /* THUMBNAIL STRIP */
     #strip {
       height: var(--strip-height);
-      background: rgba(26, 26, 26, 0.45);
-      border-top: 1px solid rgba(42, 42, 42, 0.45);
+      background: rgba(236, 236, 236, 0.92);
+      border-top: 1px solid rgba(200, 200, 200, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -146,12 +160,12 @@
       overflow-x: auto;
       flex-shrink: 0;
       scrollbar-width: thin;
-      scrollbar-color: var(--accent) rgba(34, 34, 34, 0.45);
+      scrollbar-color: #00a651 rgba(224, 224, 224, 0.3);
       backdrop-filter: blur(8px);
     }
     #strip::-webkit-scrollbar { height: 4px; }
-    #strip::-webkit-scrollbar-track { background: rgba(34, 34, 34, 0.45); }
-    #strip::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    #strip::-webkit-scrollbar-track { background: rgba(224, 224, 224, 0.3); }
+    #strip::-webkit-scrollbar-thumb { background: #00a651; border-radius: 2px; }
 
     .thumb {
       flex-shrink: 0;
@@ -164,15 +178,15 @@
       border: 2px solid transparent;
       transition: border-color 0.2s, transform 0.2s;
     }
-    .thumb:hover { transform: translateY(-2px); border-color: #555; }
-    .thumb.active { border-color: var(--accent); }
+    .thumb:hover { transform: translateY(-2px); border-color: #999; }
+    .thumb.active { border-color: #00a651; }
 
     .thumb img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      filter: brightness(0.75);
+      filter: brightness(0.8);
       transition: filter 0.2s;
     }
     .thumb:hover img, .thumb.active img { filter: brightness(1); }
@@ -182,7 +196,7 @@
       top: 6px; left: 8px;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 13px;
-      color: var(--accent);
+      color: #00a651;
       letter-spacing: 1px;
       z-index: 2;
     }
@@ -192,7 +206,10 @@
 
 <!-- TOP BAR -->
 <div id="topbar">
-  <div id="tour-title">360° TOUR</div>
+  <div id="topbar-left">
+    <img id="logo" src="logo-test.png" alt="Logo">
+    <div id="tour-title">360° TOUR</div>
+  </div>
   <div id="scene-counter"><span id="c-current">1</span> / <span id="c-total">2</span></div>
 </div>
 
@@ -215,19 +232,19 @@
 // ============================================================
 const scenes = [
   {
-    id: 'room1',
+    id: 'office1',
     title: 'Büro 1',
     panorama: 'office1.jpg',
     hotSpots: [
-      { pitch: 0, yaw: 90, type: 'scene', text: 'Büro 2 →', sceneId: 'room2' }
+      { pitch: 0, yaw: 90, type: 'scene', text: 'Büro 2 →', sceneId: 'office2' }
     ]
   },
   {
-    id: 'room2',
+    id: 'office2',
     title: 'Büro 2',
     panorama: 'office2.jpg',
     hotSpots: [
-      { pitch: 0, yaw: -90, type: 'scene', text: '← Büro 1', sceneId: 'room1' }
+      { pitch: 0, yaw: -90, type: 'scene', text: '← Büro 1', sceneId: 'office1' }
     ]
   }
   // Weitere Räume einfach hier einfügen nach demselben Muster
@@ -267,7 +284,7 @@ scenes.forEach((s, i) => {
   thumb.className = 'thumb' + (i === 0 ? ' active' : '');
   thumb.dataset.index = i;
   thumb.innerHTML = `
-    <img src="${s.panorama}" alt="${s.title}" onerror="this.style.background='#333'">
+    <img src="${s.panorama}" alt="${s.title}" onerror="this.style.background='#ddd'">
     <div class="thumb-num">0${i+1}</div>
   `;
   thumb.addEventListener('click', () => goTo(i));
